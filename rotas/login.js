@@ -4,15 +4,12 @@ import { autentica, recuperaUsuarioDoToken } from '../seguranca/autenticacao.js'
 const router = express.Router();
 router.post('/login', (req, resp) => {
 
-    // try {
+    try {
         const autenticacao = autentica(req.body.email, req.body.senha);
-        recuperaUsuarioDoToken(autenticacao.token);
-        resp.json({ dados: autenticacao });
-
-        
-    // } catch (erro) {
-    //     resp.status(401).json({ mensagem: erro.message });
-    // }
+        resp.json({ dados: autenticacao });      
+    } catch (erro) {
+        resp.status(401).json({ mensagem: erro.message });
+    }
 });
 
 export default router;

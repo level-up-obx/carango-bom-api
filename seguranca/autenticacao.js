@@ -3,7 +3,8 @@ import { createHash } from 'crypto';
 
 import { usuarioPorEmail } from '../db/banco-json.js';
 
-function criaOpcoesDoToken(idlDoUsuario, expiracao = '120s', outrasOpcoes = {}) {
+function criaOpcoesDoToken(idlDoUsuario, expiracao = `${process.env.JWT_EXPIRACAO}`, outrasOpcoes = {}) {
+    console.log(`expiracao`, expiracao, typeof expiracao);
     return {
         ...outrasOpcoes,
         issuer: 'Carango Bom API',
@@ -16,7 +17,7 @@ function criaOpcoesDoToken(idlDoUsuario, expiracao = '120s', outrasOpcoes = {}) 
 function geraToken(usuario) {
     return geradorDeToken.sign(
         { roles: ['ADMINISTRADOR'] }, 
-        process.env.CHAVE_JWT, 
+        process.env.JWT_CHAVE, 
         criaOpcoesDoToken(usuario.email)
     );
 }
@@ -48,9 +49,10 @@ export function autentica(email, senha) {
 
 export function recuperaUsuarioDoToken(token) {
     try {
-        const validacao = geradorDeToken.verify(token, process.env.CHAVE_JWT);
+        const validacao = geradorDeToken.verify(token, process.env.JWT_CHAVE);
         return usuarioPorEmail(validacao.sub);
     } catch (erro) {
+        console.log(`erro`, erro);
         throw new Error(`Erro ao validar token: ${token}`);
     }
 }
@@ -63,8 +65,7 @@ export function validaAutenticacao(req, resp, next) {
     }
 
     try {
-        const token = cabecalhoDeAutorizacao.substring(7);
-
+        const token = cabecalhoDeAutorizacao.substring(7);        
         const usuario = recuperaUsuarioDoToken(token);
         req.usuario = usuario;
 

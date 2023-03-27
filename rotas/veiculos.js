@@ -30,28 +30,30 @@ function dtoParaVeiculo(req) {
     };
 };
 
+function veiculoParaDto(veiculo) {
+    let marca = marcaPorId(veiculo.marcaId);
+
+    return {
+        id: veiculo.id,
+        modelo: veiculo.modelo,
+        ano: veiculo.ano,
+        urlImagem: veiculo.urlImagem,
+        valor: veiculo.valor,
+        marca: marca
+    }; 
+}
+
 
 const router = express.Router();
 router.get('/veiculos', (req, resp) => {
     let veiculosDto = listaVeiculos()
-        .map(veiculoDb => {
-            let marca = marcaPorId(veiculoDb.marcaId);
-
-            return {
-                id: veiculoDb.id,
-                modelo: veiculoDb.modelo,
-                ano: veiculoDb.ano,
-                urlImagem: veiculoDb.urlImagem,
-                valor: veiculoDb.valor,
-                marca: marca
-            };
-        });
+        .map(veiculoParaDto);
 
     resp.json({ dados: veiculosDto });
 });
 
 router.get('/veiculos/:id', validaSeVeiculoExiste, (req, resp) => {
-    resp.json({ dados: req.veiculo });
+    resp.json({ dados: veiculoParaDto(req.veiculo) });
 });
 
 router.post('/veiculos', validaAutenticacao, (req, resp) => {
@@ -67,7 +69,7 @@ router.post('/veiculos', validaAutenticacao, (req, resp) => {
     cadastraVeiculo(novoVeiculo)
         .then(() => { 
             resp.sucessoComLocation(`/veiculos/${novoVeiculo.id}`, {
-                dados: novoVeiculo,
+                dados: veiculoParaDto(novoVeiculo),
                 mensagem: `Veículo ${novoVeiculo.modelo} cadastrado.`
             });
         });
@@ -86,7 +88,7 @@ router.put('/veiculos/:id', validaAutenticacao, validaSeVeiculoExiste, (req, res
 
     alteraVeiculo(veiculoParaAlterar)
         .then(() => resp.json({
-            dados: veiculoParaAlterar,
+            dados: veiculoParaDto(veiculoParaAlterar),
             mensagem: `Veículo ${veiculoParaAlterar.id} alterado.`
         }));
 });

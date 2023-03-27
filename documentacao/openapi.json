@@ -1,0 +1,679 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Carango Bom API",
+    "description": "Essa é a documentação da API do projeto Carango Bom.",
+    "contact": {
+      "email": "bizdev.tech@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "alura bizdev"
+    }
+  ],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Valida credenciais do usuário e emite token JWT de autenticação",
+        "operationId": "efetuaAutenticacao",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredenciaisInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Credenciais válidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RespostaHttp"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "dados": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/Autenticacao"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/marcas": {
+      "post": {
+        "tags": [
+          "Marca"
+        ],
+        "summary": "Cadastra uma nova marca e atribui um ID a ela",
+        "operationId": "cadastraMarca",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarcaInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Nova marca cadastrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RespostaHttp"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "dados": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/Marca"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Marca"
+        ],
+        "summary": "Lista todas as marcas",
+        "operationId": "listaMarcas",
+        "responses": {
+          "200": {
+            "description": "Lista todas as marcas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "dados": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Marca"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/marcas/{marcaId}": {
+      "put": {
+        "tags": [
+          "Marca"
+        ],
+        "summary": "Altera marca existente",
+        "operationId": "alteraMarca",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "marcaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Marca"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Marca alterada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RespostaHttp"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "dados": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/Marca"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Marca"
+        ],
+        "summary": "Excluir marca existente",
+        "operationId": "excluiMarca",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "marcaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Marca excluída"
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Marca vinculada a algum veículo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/veiculos": {
+      "post": {
+        "tags": [
+          "Veículo"
+        ],
+        "summary": "Cadastra um novo veículo e atribui um ID a ele",
+        "operationId": "cadastraVeiculo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VeiculoInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Novo veículo cadastrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RespostaHttp"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "dados": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/Veiculo"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID da marca para vincular veículo não existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Veículo"
+        ],
+        "summary": "Lista todos os veículos",
+        "operationId": "listaVeiculos",
+        "responses": {
+          "200": {
+            "description": "Devolve um array de veículos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "dados": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Veiculo"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/veiculos/{veiculoId}": {
+      "put": {
+        "tags": [
+          "Veículo"
+        ],
+        "summary": "Altera um veículo existente",
+        "operationId": "alteraVeiculo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "veiculoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "#/components/schemas/VeiculoInputDto"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Veículo alterado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RespostaHttp"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "dados": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/Veiculo"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Veículo"
+        ],
+        "summary": "Excluir veículo existente",
+        "operationId": "excluiVeiculo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "veiculoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Veículo excluído"
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Exibe indicadores da quantidade de veículos de cada marca e o montante",
+        "operationId": "consolidaIndicadoresDasMarcas",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista indicadores das marcas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "dados": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EstatisticaMarca"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT inválido ou ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensagemHttp"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RespostaHttp": {
+        "type": "object",
+        "properties": {
+          "dados": {
+            "type": "object"
+          }
+        }
+      },
+      "MensagemHttp": {
+        "type": "object",
+        "properties": {
+          "mensagem": {
+            "type": "string",
+            "description": "Usado quando a API precisa informar mensagens de erro"
+          }
+        }
+      },
+      "CredenciaisInputDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "senha": {
+            "type": "string"
+          }
+        }
+      },
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "nome": {
+            "type": "string"
+          }
+        }
+      },
+      "Autenticacao": {
+        "type": "object",
+        "properties": {
+          "usuario": {
+            "$ref": "#/components/schemas/Usuario",
+            "format": "email"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "Marca": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID"
+          },
+          "nome": {
+            "type": "string"
+          }
+        }
+      },
+      "Veiculo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID"
+          },
+          "modelo": {
+            "type": "string"
+          },
+          "ano": {
+            "type": "integer"
+          },
+          "valor": {
+            "type": "number"
+          },
+          "imagemUrl": {
+            "type": "string",
+            "format": "url",
+            "description": "Endereço onde a imagem pode ser visualizada"
+          },
+          "marca": {
+            "$ref": "#/components/schemas/Marca"
+          }
+        }
+      },
+      "EstatisticaMarca": {
+        "type": "object",
+        "properties": {
+          "marca": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "integer"
+          },
+          "montante": {
+            "type": "number"
+          }
+        }
+      },
+      "VeiculoInputDto": {
+        "type": "object",
+        "properties": {
+          "modelo": {
+            "type": "string"
+          },
+          "ano": {
+            "type": "integer"
+          },
+          "valor": {
+            "type": "number"
+          },
+          "imagemUrl": {
+            "type": "string",
+            "format": "url",
+            "description": "Endereço onde a imagem pode ser visualizada"
+          },
+          "marcaId": {
+            "type": "string",
+            "format": "UUID",
+            "description": "ID da marca ao qual o veículo está vinculado"
+          }
+        }
+      },
+      "MarcaInputDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
