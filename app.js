@@ -1,5 +1,6 @@
 import express from "express";
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 
 import login from "./rotas/login.js";
 import marcas from "./rotas/marcas.js";
@@ -10,7 +11,7 @@ import documentacao from "./documentacao/openapi.json" assert { type: "json" };
 
 function sucessoComLocation(req, resp, next) {
     const resposta = resp;
-
+    
     resposta.sucessoComLocation = function(uri, dados) {
         resposta.append('Location', `${process.env.BASE_URL}${uri}`);
         resposta.status(201).json(dados);
@@ -21,6 +22,13 @@ function sucessoComLocation(req, resp, next) {
 
 export function criaApp() {
     const app = express();
+    // app.use(cors({
+    //     "origin": "*",
+    //     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    //     "optionsSuccessStatus": 204
+    // }));
+    app.use(cors());
+
     app.use(express.json());
     app.use(sucessoComLocation);
     
@@ -30,5 +38,7 @@ export function criaApp() {
     app.use(process.env.CONTEXTO, dashboard);
     
     app.use('/', swaggerUi.serve, swaggerUi.setup(documentacao));
+    
+
     return app;
 };

@@ -15,6 +15,7 @@
   "author": "Cácio Costa",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0",
     "express": "^4.18.2",
