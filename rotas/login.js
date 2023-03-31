@@ -1,5 +1,5 @@
 import express from 'express';
-import { autentica, recuperaUsuarioDoToken } from '../seguranca/autenticacao.js';
+import { autentica, recuperaUsuarioDoToken, validaAutenticacao } from '../seguranca/autenticacao.js';
 
 const router = express.Router();
 router.post('/login', (req, resp) => {
@@ -10,6 +10,12 @@ router.post('/login', (req, resp) => {
     } catch (erro) {
         resp.status(401).json({ mensagem: erro.message });
     }
+});
+
+router.get('/usuario', validaAutenticacao, (req, resp) => {
+    resp.json({
+        dados: req.usuario
+    });
 });
 
 export default router;

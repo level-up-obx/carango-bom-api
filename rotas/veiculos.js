@@ -23,7 +23,7 @@ function dtoParaVeiculo(req) {
         id: req.body.id,
         modelo: req.body.modelo,
         marcaId: req.body.marcaId,
-        urlImagem: req.body.urlImagem,
+        imagemUrl: req.body.imagemUrl,
 
         ano: parseInt(req.body.ano),
         valor: parseFloat(req.body.valor)
@@ -37,7 +37,7 @@ function veiculoParaDto(veiculo) {
         id: veiculo.id,
         modelo: veiculo.modelo,
         ano: veiculo.ano,
-        urlImagem: veiculo.urlImagem,
+        imagemUrl: veiculo.imagemUrl,
         valor: veiculo.valor,
         marca: marca
     }; 
